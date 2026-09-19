@@ -29,7 +29,16 @@ export function buildApp({ sessionMiddleware } = {}) {
     contentSecurityPolicy: false,
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   }))
-  app.use(cors({ origin: ENV.clientOrigin, credentials: true }))
+  app.use(cors({
+    origin(origin, cb) {
+      if (!origin) return cb(null, true) // same-origin / non-browser clients
+      if (origin === ENV.clientOrigin) return cb(null, true)
+      if (ENV.clientOrigins.includes(origin)) return cb(null, true)
+      if (/\.vercel\.app$/.test(new URL(origin).hostname)) return cb(null, true) // any Vercel deployment
+      return cb(null, false)
+    },
+    credentials: true,
+  }))
   app.use(express.json({ limit: '512kb' }))
   app.use(express.urlencoded({ extended: true, limit: '512kb' }))
   app.use(sanitizeBody)

@@ -20,6 +20,12 @@ export const ENV = {
     .map((s) => s.trim())
     .filter(Boolean),
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  // Extra allowed CORS origins besides CLIENT_ORIGIN (comma separated). Any
+  // *.vercel.app origin is also allowed so a deployed frontend always connects.
+  clientOrigins: (process.env.CLIENT_ORIGINS || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
   sessionSecret: process.env.SESSION_SECRET || 'dev-only-insecure-secret-change-me',
   secureCookies: String(process.env.SECURE_COOKIES) === 'true',
   apiBaseUrl: process.env.API_BASE_URL || `http://localhost:${Number(process.env.PORT) || 5050}`,

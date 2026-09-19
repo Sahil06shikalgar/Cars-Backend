@@ -28,7 +28,7 @@ services:
       - key: CLIENT_ORIGIN
         sync: false   # https://<your-project>.vercel.app  (no trailing slash)
       - key: API_BASE_URL
-        sync: false   # https://diecet-backend.onrender.com  (this service's URL)
+        sync: false   # https://cars-backend-umas.onrender.com  (this service's URL)
       - key: MONGO_DIRECT_HOSTS
         sync: false   # optional, only if Atlas SRV lookup is blocked
       - key: GOOGLE_CLIENT_ID
