@@ -1,0 +1,39 @@
+# Render Blueprint for diecet-backend (free tier).
+# Deploy: push this repo, then in Render click "New > Blueprint"
+# (render.yaml auto-detected) or "New > Web Service" and point it at /Backend.
+
+services:
+  - type: web
+    name: diecet-backend
+    runtime: node
+    plan: free                 # free web service (auto-sleeps when idle)
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5050
+      - key: SECURE_COOKIES
+        value: "true"
+      - key: UPLOAD_DIR
+        value: uploads
+      # Set these in the Render dashboard (Service > Environment) — never commit them:
+      - key: MONGODB_URI
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false   # https://<your-project>.vercel.app  (no trailing slash)
+      - key: API_BASE_URL
+        sync: false   # https://diecet-backend.onrender.com  (this service's URL)
+      - key: MONGO_DIRECT_HOSTS
+        sync: false   # optional, only if Atlas SRV lookup is blocked
+      - key: GOOGLE_CLIENT_ID
+        sync: false   # optional — leave unset unless you configure Google OAuth
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false   # optional
+      - key: GOOGLE_REDIRECT_URI
+        sync: false   # optional — must match a registered Google redirect URI

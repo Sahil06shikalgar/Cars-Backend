@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Secrets — NEVER commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Uploaded photos (local disk, ephemeral on Render)
+uploads/
+
+# Logs / misc
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

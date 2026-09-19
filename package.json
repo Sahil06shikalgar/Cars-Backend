@@ -1,0 +1,30 @@
+{
+  "name": "diecet-backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "API + socket server for Diecet Gardage diecast collector app",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/seed/seed.js",
+    "lint": "node --check src/server.js && node scripts/check-syntax.mjs",
+    "check": "node scripts/check-syntax.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.8.4",
+    "mongo-sanitize": "^1.1.0",
+    "multer": "^2.0.1",
+    "socket.io": "^4.8.1"
+  }
+}
