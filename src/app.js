@@ -18,6 +18,7 @@ import notificationsRoutes from './routes/notifications.js'
 import reportsRoutes from './routes/reports.js'
 import uploadsRoutes from './routes/uploads.js'
 import tradesRoutes from './routes/trades.js'
+import blogRoutes from './routes/blogs.js'
 
 const mongoUri = requireEnv('MONGODB_URI')
 
@@ -63,6 +64,7 @@ export function buildApp({ sessionMiddleware } = {}) {
   app.use('/api/reports', reportsRoutes)
   app.use('/api/upload', uploadsRoutes)
   app.use('/api/trades', tradesRoutes)
+  app.use('/api/blogs', blogRoutes)
 
   app.use(notFound)
   app.use(errorHandler)

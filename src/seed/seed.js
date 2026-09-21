@@ -12,7 +12,9 @@ import Post from '../models/Post.js'
 import Auction from '../models/Auction.js'
 import Conversation from '../models/Conversation.js'
 import Message from '../models/Message.js'
+import Blog from '../models/Blog.js'
 import { makeInitials, pickColor } from '../utils/identity.js'
+import { makeSlug, uniqueSlug } from '../utils/slug.js'
 
 const DEMO_DB_FLAG = { demo: true }
 
@@ -86,6 +88,7 @@ async function run() {
     await Auction.deleteMany({ seller: { $in: demoIds } })
     await Message.deleteMany({ sender: { $in: demoIds } })
     await Conversation.deleteMany({ participants: { $in: demoIds } })
+    await Blog.deleteMany({ author: { $in: demoIds } })
   }
   await User.deleteMany(DEMO_DB_FLAG)
 
@@ -158,6 +161,72 @@ async function run() {
     await p.save()
   }
 
+  // Blog section — a handful of editorial articles so the Blogs tab has life.
+  const blogCover = [[1, '/uploads/Cars/car-1-Xdlto-Sa.jpg'], [2, '/uploads/Cars/car-2-DsJECiLL.jpg'], [3, '/uploads/Finds/find-1-CiWavn-S.jpg'], [4, '/uploads/Finds/find-2-dS6oQXzx.jpg']]
+  const blogs = [
+    {
+      author: 1, category: 'Guides',
+      title: 'Die-cast collecting on a budget',
+      excerpt: 'You do not need a perfect wallet to build a great garage. Here is how to grow the collection, casting by casting.',
+      readMinutes: 4, featured: true, tags: ['budget', 'beginner', 'tips'],
+      body: [
+        'The best part of this hobby is that it scales. A €5 mainline can bring as much joy as a €400 resin model — what actually matters is intent. Decide on a theme (JDM, rally, racing legends) and buy to the theme, not past it.',
+        'Sell the dust. Display cases, trade meets and the archive section of this app exist precisely so a casting you have outgrown can become a casting someone else hunted for. Recycling within the community keeps budgets healthy.',
+        'Patience is the real super power. The same casting re-appears on the shelf, in auctions and in trades — wait for the price that makes you smile, not the one that makes you anxious.',
+      ],
+    },
+    {
+      author: 2, category: 'Guides',
+      title: 'Reading the rarity tiers like a pro',
+      excerpt: 'Common, Rare, Epic, Legendary — what those words actually mean for value, scarcity and trading power.',
+      readMinutes: 3, featured: false, tags: ['rarity', 'valuation'],
+      body: [
+        'Rarity tiers are a short-hand for how hard a casting is to re-find, not how "good" it is. A Common can be a daily favourite; a Legendary can sit in a box forever.',
+        'Check the casting window. Models produced for only one season, or never re-released, behave like Rare or Epic territory even if the blister says otherwise. Auction history is your friend here — this app tracks every live lot so you can watch the market move.',
+        'Trade leverage is built on rarity tiers meeting demand. An Epic someone else actively hunts opens more doors than an Ultra nobody is asking for.',
+      ],
+    },
+    {
+      author: 3, category: 'Community',
+      title: 'How flea-market finds keep happening',
+      excerpt: 'Inside the morning routine of a collector who never pays retail: boxes, bins and early alarms.',
+      readMinutes: 5, featured: false, tags: ['fleamarket', 'finds'],
+      body: [
+        'It looks like luck, but it is a routine. I arrive before the stalls are fully set, walk the far rows first (serious sellers arrive early, impulse sellers open late) and I always ask to open the tub — most collectors never ask, so they are handed the box.',
+        'Keep a set-limit note in your pocket: "today I dig for Central European road cars only". Restraint turns a random tunnel of toys into a focused hunt and keeps the car boot light enough to carry home.',
+        'When you find something good, confirm it on the map before the shelf is picked clean. Timing is half the game in this community.',
+      ],
+    },
+    {
+      author: 4, category: 'News',
+      title: 'The midnight drop returns',
+      excerpt: 'A heads-up for everyone chasing the next wave — what is coming, when it launches and how to be ready.',
+      readMinutes: 2, featured: false, tags: ['news', 'drops'],
+      body: [
+        'The next release wave lands tonight at 00:00 UTC. The case is rumoured to be heavy on German metal — keep an eye on the feed and the auctions tab as collectors start listing their doubles.',
+        'Set an alarm for a few minutes before so your app is warm. When the drop hits, listings move fast; wishlist items matching a live lot will surface automatically for you.',
+        'Missed it? Trades open for days after a drop. Post what you pulled and people will show up with what you missed.',
+      ],
+    },
+  ]
+  for (let i = 0; i < blogs.length; i++) {
+    const b = blogs[i]
+    await Blog.create({
+      author: users[b.author - 1]._id,
+      title: b.title,
+      slug: await uniqueSlug(makeSlug(b.title)),
+      excerpt: b.excerpt,
+      coverUrl: blogCover[i][1],
+      category: b.category,
+      tags: b.tags,
+      body: b.body,
+      readMinutes: b.readMinutes,
+      featured: b.featured,
+      published: true,
+      createdAt: new Date(startedBy((i + 1) * 5)),
+    })
+  }
+
   // Live + ended auctions with a little bid history.
   const an = (name, brand, scale, color) => ({ name, brand, scale, color })
   const A = await Auction.create({
@@ -217,7 +286,7 @@ async function run() {
   await convo.save()
   await Message.updateMany({ _id: { $in: [m1._id, m2._id] } }, { $set: { read: true } })
 
-  console.log(`[seed] created ${users.length} demo users, ${models.length} vault models, ${finds.length} finds, 4 posts, 3 auctions, 1 conversation`)
+  console.log(`[seed] created ${users.length} demo users, ${models.length} vault models, ${finds.length} finds, 4 posts, 3 auctions, 1 conversation, ${blogs.length} articles`)
   console.log('[seed] demo login: ari@diecet.demo / demo1234 (password for all demo accounts)')
 }
 
